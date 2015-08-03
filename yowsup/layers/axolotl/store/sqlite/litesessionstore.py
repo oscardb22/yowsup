@@ -1,5 +1,7 @@
 from axolotl.state.sessionstore import SessionStore
 from axolotl.state.sessionrecord import SessionRecord
+
+
 class LiteSessionStore(SessionStore):
     def __init__(self, dbConn):
         """
@@ -8,7 +10,6 @@ class LiteSessionStore(SessionStore):
         self.dbConn = dbConn
         dbConn.execute("CREATE TABLE IF NOT EXISTS sessions (_id INTEGER PRIMARY KEY AUTOINCREMENT,"
                        "recipient_id INTEGER UNIQUE, device_id INTEGER, record BLOB, timestamp INTEGER);")
-
 
     def loadSession(self, recipientId, deviceId):
         q = "SELECT record FROM sessions WHERE recipient_id = ? AND device_id = ?"

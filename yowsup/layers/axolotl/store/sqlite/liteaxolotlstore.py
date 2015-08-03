@@ -4,12 +4,14 @@ from .liteprekeystore import LitePreKeyStore
 from .litesessionstore import LiteSessionStore
 from .litesignedprekeystore import LiteSignedPreKeyStore
 import sqlite3
+
+
 class LiteAxolotlStore(AxolotlStore):
     def __init__(self, db):
         conn = sqlite3.connect(db, check_same_thread=False)
         conn.text_factory = bytes
         self.identityKeyStore = LiteIdentityKeyStore(conn)
-        self.preKeyStore =  LitePreKeyStore(conn)
+        self.preKeyStore = LitePreKeyStore(conn)
         self.signedPreKeyStore = LiteSignedPreKeyStore(conn)
         self.sessionStore = LiteSessionStore(conn)
 

@@ -1,4 +1,6 @@
 import abc
+
+
 class YowsupEnv(object):
     __metaclass__ = abc.ABCMeta
 
@@ -33,9 +35,8 @@ class YowsupEnv(object):
 
     def getUserAgent(self):
         return self.__class__._USERAGENT_STRING.format(
-            WHATSAPP_VERSION = self.getVersion(),
-            OS_NAME = self.getOSName(),
-            OS_VERSION = self.getOSVersion(),
-            DEVICE_NAME = self.getDeviceName()
+            WHATSAPP_VERSION=self.getVersion(),
+            OS_NAME=self.getOSName(),
+            OS_VERSION=self.getOSVersion(),
+            DEVICE_NAME=self.getDeviceName()
         )
-

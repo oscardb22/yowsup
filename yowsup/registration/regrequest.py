@@ -23,10 +23,10 @@ from yowsup.common.http.warequest import WARequest
 from yowsup.common.http.waresponseparser import JSONResponseParser
 from yowsup.common.tools import StorageTools
 
-class WARegRequest(WARequest):
 
-    def __init__(self,cc, p_in, code):
-        super(WARegRequest,self).__init__()
+class WARegRequest(WARequest):
+    def __init__(self, cc, p_in, code):
+        super(WARegRequest, self).__init__()
         idx = StorageTools.getIdentity(cc + p_in)
 
         if idx is None:
@@ -40,10 +40,11 @@ class WARegRequest(WARequest):
 
         self.url = "v.whatsapp.net/v2/register"
 
-        self.pvars = ["status", "login", "pw", "type", "expiration", "kind", "price", "cost", "currency", "price_expiration",
-                      "reason","retry_after"]
+        self.pvars = ["status", "login", "pw", "type", "expiration", "kind", "price", "cost", "currency",
+                      "price_expiration",
+                      "reason", "retry_after"]
 
         self.setParser(JSONResponseParser())
-        
+
     def register(self):
         return self.send()

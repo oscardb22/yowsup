@@ -19,16 +19,13 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-import os, base64
+import os
+import base64
+from urllib.parse import urlparse
 
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
 
 class HttpProxy:
-
-    def __init__(self, address, username = None, password = None):
+    def __init__(self, address, username=None, password=None):
         self.address = address
         self.username = username
         self.password = password
@@ -53,8 +50,8 @@ class HttpProxy:
         host = dat.hostname
         return HttpProxy((host, port), dat.username, dat.password)
 
-class HttpProxyHandler:
 
+class HttpProxyHandler:
     def __init__(self, proxy):
         self.state = 'init'
         self.proxy = proxy
@@ -66,7 +63,8 @@ class HttpProxyHandler:
         proxy = self.proxy
         authHeader = None
         if proxy.username and proxy.password:
-            key = bytes(proxy.username, 'ascii') + b':' + bytes(proxy.password, 'ascii') if (bytes != str) else bytes(proxy.username) + b':' + proxy.password
+            key = bytes(proxy.username, 'ascii') + b':' + bytes(proxy.password, 'ascii') if (bytes != str) else bytes(
+                proxy.username) + b':' + proxy.password
             auth = base64.b64encode(key)
             authHeader = b'Proxy-Authorization: Basic ' + auth + b'\r\n'
         data = bytearray('CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\n' % (2 * pair), 'ascii')

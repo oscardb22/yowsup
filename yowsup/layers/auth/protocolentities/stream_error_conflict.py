@@ -1,4 +1,6 @@
 from yowsup.structs import ProtocolEntity, ProtocolTreeNode
+
+
 class StreamErrorConflictProtocolEntity(ProtocolEntity):
     '''
      <stream:error>
@@ -6,18 +8,19 @@ class StreamErrorConflictProtocolEntity(ProtocolEntity):
         <text>Replaced by new connection</text>
      </stream:error>
     '''
-    def __init__(self,  text = None):
+
+    def __init__(self, text=None):
         super(StreamErrorConflictProtocolEntity, self).__init__("stream:error")
         self.setText(text)
 
-    def setText(self, text = None):
+    def setText(self, text=None):
         self.text = text or ''
 
     def getText(self):
         return self.text
 
     def __str__(self):
-        out  = "Conflict Stream Error\n"
+        out = "Conflict Stream Error\n"
         if self.text:
             out += "Text: %s\n" % self.getText()
 
@@ -28,7 +31,6 @@ class StreamErrorConflictProtocolEntity(ProtocolEntity):
         node.addChild(ProtocolTreeNode("conflict"))
         node.addChild(ProtocolTreeNode("text", data=self.text))
         return node
-
 
     @staticmethod
     def fromProtocolTreeNode(node):

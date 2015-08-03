@@ -1,6 +1,8 @@
-from yowsup.structs import ProtocolEntity, ProtocolTreeNode
+from yowsup.structs import ProtocolEntity
+
+
 class SuccessProtocolEntity(ProtocolEntity):
-    def __init__(self, status, kind, creation, expiration, props, t, nonce = None):
+    def __init__(self, status, kind, creation, expiration, props, t, nonce=None):
         super(SuccessProtocolEntity, self).__init__("success")
         self.status = status
         self.kind = kind
@@ -8,10 +10,10 @@ class SuccessProtocolEntity(ProtocolEntity):
         self.expiration = int(expiration)
         self.props = props
         self.nonce = nonce
-        self.t = int(t) ##whatever that is !
+        self.t = int(t)  # whatever that is !
 
     def __str__(self):
-        out  = "Account:\n"
+        out = "Account:\n"
         out += "Status: %s\n" % self.status
         out += "Kind: %s\n" % self.kind
         out += "Creation: %s\n" % self.creation
@@ -22,14 +24,14 @@ class SuccessProtocolEntity(ProtocolEntity):
 
     def toProtocolTreeNode(self):
         attributes = {
-            "status"      :    self.status,
-            "kind"        :    self.kind,
-            "creation"    :    str(self.creation),
-            "expiration"  :    str(self.expiration),
-            "props"       :    self.props,
-            "t"           :    str(self.t)
+            "status": self.status,
+            "kind": self.kind,
+            "creation": str(self.creation),
+            "expiration": str(self.expiration),
+            "props": self.props,
+            "t": str(self.t)
         }
-        return self._createProtocolTreeNode(attributes, children = None, data = self.nonce)
+        return self._createProtocolTreeNode(attributes, children=None, data=self.nonce)
 
     @staticmethod
     def fromProtocolTreeNode(node):
@@ -41,4 +43,4 @@ class SuccessProtocolEntity(ProtocolEntity):
             node.getAttributeValue("props"),
             node.getAttributeValue("t"),
             node.getData()
-            )
+        )

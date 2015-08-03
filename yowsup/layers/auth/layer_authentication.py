@@ -1,4 +1,4 @@
-from yowsup.layers import YowLayer, YowLayerEvent, YowProtocolLayer
+from yowsup.layers import YowLayerEvent, YowProtocolLayer
 from .keystream import KeyStream
 from yowsup.common.tools import TimeTools
 from .layer_crypt import YowCryptLayer
@@ -7,9 +7,11 @@ from .autherror import AuthError
 from .protocolentities import *
 from yowsup.common.tools import StorageTools
 import base64
+
+
 class YowAuthenticationProtocolLayer(YowProtocolLayer):
-    EVENT_LOGIN      = "org.openwhatsapp.yowsup.event.auth.login"
-    EVENT_AUTHED  = "org.openwhatsapp.yowsup.event.auth.authed"
+    EVENT_LOGIN = "org.openwhatsapp.yowsup.event.auth.login"
+    EVENT_AUTHED = "org.openwhatsapp.yowsup.event.auth.authed"
     PROP_CREDENTIALS = "org.openwhatsapp.yowsup.prop.auth.credentials"
     PROP_PASSIVE = "org.openwhatsapp.yowsup.prop.auth.passive"
 
@@ -44,7 +46,7 @@ class YowAuthenticationProtocolLayer(YowProtocolLayer):
 
     ## general methods
     def login(self):
-        
+
         self._sendFeatures()
         self._sendAuth()
 
@@ -54,8 +56,8 @@ class YowAuthenticationProtocolLayer(YowProtocolLayer):
         self.toUpper(nodeEntity)
 
     def handleSuccess(self, node):
-        if(node.data != None): StorageTools.writeNonce(self.credentials[0],node.data)
-        successEvent = YowLayerEvent(self.__class__.EVENT_AUTHED, passive = self.getProp(self.__class__.PROP_PASSIVE))
+        if (node.data != None): StorageTools.writeNonce(self.credentials[0], node.data)
+        successEvent = YowLayerEvent(self.__class__.EVENT_AUTHED, passive=self.getProp(self.__class__.PROP_PASSIVE))
         self.broadcastEvent(successEvent)
         nodeEntity = SuccessProtocolEntity.fromProtocolTreeNode(node)
         self.toUpper(nodeEntity)
@@ -63,7 +65,7 @@ class YowAuthenticationProtocolLayer(YowProtocolLayer):
     def handleFailure(self, node):
         nodeEntity = FailureProtocolEntity.fromProtocolTreeNode(node)
         self.toUpper(nodeEntity)
-        self.broadcastEvent(YowLayerEvent(YowNetworkLayer.EVENT_STATE_DISCONNECT, reason = "Authentication Failure"))
+        self.broadcastEvent(YowLayerEvent(YowNetworkLayer.EVENT_STATE_DISCONNECT, reason="Authentication Failure"))
         raise AuthError(nodeEntity.getReason())
 
     def handleChallenge(self, node):
@@ -91,44 +93,34 @@ class YowAuthenticationProtocolLayer(YowProtocolLayer):
             self.entityToLower(AuthProtocolEntity(self.credentials[0], passive=passive))
         else:
             inputKey, outputKey, authBlob = self.generateAuthBlob(nonce)
-            #to prevent enr whole response
-            self.broadcastEvent(YowLayerEvent(YowCryptLayer.EVENT_KEYS_READY, keys = (inputKey, None)))
+            # to prevent enr whole response
+            self.broadcastEvent(YowLayerEvent(YowCryptLayer.EVENT_KEYS_READY, keys=(inputKey, None)))
             self.entityToLower(AuthProtocolEntity(self.credentials[0], passive=passive, nonce=authBlob))
-            self.broadcastEvent(YowLayerEvent(YowCryptLayer.EVENT_KEYS_READY, keys = (inputKey, outputKey)))
+            self.broadcastEvent(YowLayerEvent(YowCryptLayer.EVENT_KEYS_READY, keys=(inputKey, outputKey)))
 
-
-    def _sendResponse(self,nonce):
+    def _sendResponse(self, nonce):
         inputKey, outputKey, authBlob = self.generateAuthBlob(nonce)
         responseEntity = ResponseProtocolEntity(authBlob)
 
-        #to prevent enr whole response
-        self.broadcastEvent(YowLayerEvent(YowCryptLayer.EVENT_KEYS_READY, keys = (inputKey, None))) 
+        # to prevent enr whole response
+        self.broadcastEvent(YowLayerEvent(YowCryptLayer.EVENT_KEYS_READY, keys=(inputKey, None)))
         self.entityToLower(responseEntity)
-        self.broadcastEvent(YowLayerEvent(YowCryptLayer.EVENT_KEYS_READY, keys = (inputKey, outputKey)))
-        #YowCryptLayer.setProp("outputKey", outputKey)
-
+        self.broadcastEvent(YowLayerEvent(YowCryptLayer.EVENT_KEYS_READY, keys=(inputKey, outputKey)))
+        # YowCryptLayer.setProp("outputKey", outputKey)
 
     def generateAuthBlob(self, nonce):
         keys = KeyStream.generateKeys(self.credentials[1], nonce)
 
         inputKey = KeyStream(keys[2], keys[3])
         outputKey = KeyStream(keys[0], keys[1])
-
-        #YowCryptLayer.setProp("inputKey", inputKey)
-
-
         nums = bytearray(4)
-
-        #nums = [0] * 4
-
-
         username_bytes = list(map(ord, self.credentials[0]))
         nums.extend(username_bytes)
         nums.extend(nonce)
 
         utcNow = str(int(TimeTools.utcTimestamp()))
 
-        time_bytes =  list(map(ord, utcNow))
+        time_bytes = list(map(ord, utcNow))
 
         nums.extend(time_bytes)
 

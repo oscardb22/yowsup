@@ -1,18 +1,17 @@
-from yowsup.stacks import YowStack, YowStackBuilder
+from yowsup.stacks import YowStackBuilder
 from .layer import YowsupCliLayer
 from yowsup.layers.auth import AuthError
 from yowsup.layers import YowLayerEvent
-from yowsup import env
-from yowsup.env import S40YowsupEnv
 import sys
 
+
 class YowsupCliStack(object):
-    def __init__(self, credentials, encryptionEnabled = True):
+    def __init__(self, credentials, encryptionEnabled=True):
         stackBuilder = YowStackBuilder()
 
-        self.stack = stackBuilder\
-            .pushDefaultLayers(encryptionEnabled)\
-            .push(YowsupCliLayer)\
+        self.stack = stackBuilder \
+            .pushDefaultLayers(encryptionEnabled) \
+            .push(YowsupCliLayer) \
             .build()
 
         self.stack.setCredentials(credentials)
@@ -22,9 +21,9 @@ class YowsupCliStack(object):
         self.stack.broadcastEvent(YowLayerEvent(YowsupCliLayer.EVENT_START))
 
         try:
-            self.stack.loop(timeout = 0.5, discrete = 0.5)
+            self.stack.loop(timeout=0.5, discrete=0.5)
         except AuthError as e:
-            print("Auth Error, reason %s" % e)
+            print("Auth Error, reason {0}".format(e))
         except KeyboardInterrupt:
             print("\nYowsdown")
             sys.exit(0)

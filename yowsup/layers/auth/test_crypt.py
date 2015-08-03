@@ -1,15 +1,15 @@
 from yowsup.layers import YowLayerEvent, YowLayerTest
-from yowsup.structs import ProtocolTreeNode
 from yowsup.layers.auth import YowCryptLayer
 from yowsup.layers.auth.keystream import KeyStream
+
 
 class CryptLayerTest(YowLayerTest, YowCryptLayer):
     def setUp(self):
         YowCryptLayer.__init__(self)
-        self.password = bytearray(list(map(ord,"password")))
-        self.salt     = bytearray(list(map(ord,"salt")))
+        self.password = bytearray(list(map(ord, "password")))
+        self.salt = bytearray(list(map(ord, "salt")))
         self.username = "username"
-        self.inputMessage = bytearray([0,0,0,0, ord('t'), ord('a'), ord('r'), ord('e'), ord('k')])
+        self.inputMessage = bytearray([0, 0, 0, 0, ord('t'), ord('a'), ord('r'), ord('e'), ord('k')])
         self.inputMessageCrypted = bytearray(b'\x80\x00\r)\x99\xbe_\xee\x98\xecV<\x9d\x0c\xb7r')
         keys = [
             bytearray(b'>\xd5\x8a\xecB\xdb\xc8\xd4}\x98\x9aBa\x89\x9fC\x08\xdcp\x8d'),
@@ -20,9 +20,8 @@ class CryptLayerTest(YowLayerTest, YowCryptLayer):
         inputKey = KeyStream(keys[2], keys[3])
         outputKey = KeyStream(keys[0], keys[1])
 
-        self.onEvent(YowLayerEvent(YowCryptLayer.EVENT_KEYS_READY, keys = (inputKey, outputKey)))
+        self.onEvent(YowLayerEvent(YowCryptLayer.EVENT_KEYS_READY, keys=(inputKey, outputKey)))
 
     def test_00send(self):
         self.send(self.inputMessage)
         self.assertEqual(self.lowerSink.pop(), self.inputMessageCrypted)
-

@@ -1,5 +1,7 @@
 from .protocoltreenode import ProtocolTreeNode
-import unittest, time
+import time
+
+
 class ProtocolEntity(object):
     __ID_GEN = 0
 
@@ -9,20 +11,18 @@ class ProtocolEntity(object):
     def getTag(self):
         return self.tag
 
-    def isType(self,  typ):
+    def isType(self, typ):
         return self.tag == typ
 
-    def _createProtocolTreeNode(self, attributes, children = None, data = None):
+    def _createProtocolTreeNode(self, attributes, children=None, data=None):
         return ProtocolTreeNode(self.getTag(), attributes, children, data)
-
 
     def _getCurrentTimestamp(self):
         return int(time.time())
 
-    def _generateId(self, short = False):
+    def _generateId(self, short=False):
         ProtocolEntity.__ID_GEN += 1
         return str(ProtocolEntity.__ID_GEN) if short else str(int(time.time())) + "-" + str(ProtocolEntity.__ID_GEN)
-
 
     def toProtocolTreeNode(self):
         pass
@@ -51,4 +51,3 @@ class ProtocolEntityTest(object):
             print("\nNOTEQ\n")
             print(self.node)
             raise
-

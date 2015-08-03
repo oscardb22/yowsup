@@ -1,10 +1,13 @@
 from yowsup.structs import ProtocolEntity, ProtocolTreeNode
+
+
 class StreamErrorAckProtocolEntity(ProtocolEntity):
     '''
      <stream:error>
         <ack></ack>
      </stream:error>
     '''
+
     def __init__(self):
         super(StreamErrorAckProtocolEntity, self).__init__("stream:error")
 

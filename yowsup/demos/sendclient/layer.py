@@ -26,9 +26,9 @@ class SendLayer(YowInterfaceLayer):
             if '@' in phone:
                 messageEntity = TextMessageProtocolEntity(message, to=phone)
             elif '-' in phone:
-                messageEntity = TextMessageProtocolEntity(message, to="%s@g.us" % phone)
+                messageEntity = TextMessageProtocolEntity(message, to="{0}@g.us".format(phone))
             else:
-                messageEntity = TextMessageProtocolEntity(message, to="%s@s.whatsapp.net" % phone)
+                messageEntity = TextMessageProtocolEntity(message, to="{0}@s.whatsapp.net".format(phone))
             # append the id of message to ackQueue list
             # which the id of message will be deleted when ack is received.
             self.ackQueue.append(messageEntity.getId())

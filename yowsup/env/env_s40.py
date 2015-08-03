@@ -1,12 +1,13 @@
 from .env import YowsupEnv
-import base64
 import hashlib
+
+
 class S40YowsupEnv(YowsupEnv):
     _VERSION = "2.12.89"
-    _OS_NAME= "S40"
+    _OS_NAME = "S40"
     _OS_VERSION = "14.26"
     _DEVICE_NAME = "Nokia302"
-    _TOKEN_STRING  = "PdA2DJyKoUrwLw1Bg6EIhzh502dF9noR9uFCllGk1435688727801{phone}"
+    _TOKEN_STRING = "PdA2DJyKoUrwLw1Bg6EIhzh502dF9noR9uFCllGk1435688727801{phone}"
     _AXOLOTL = True
 
     def getVersion(self):
@@ -25,13 +26,12 @@ class S40YowsupEnv(YowsupEnv):
         return self.__class__._AXOLOTL
 
     def getToken(self, phoneNumber):
-        return hashlib.md5(self.__class__._TOKEN_STRING.format(phone = phoneNumber).encode()).hexdigest()
+        return hashlib.md5(self.__class__._TOKEN_STRING.format(phone=phoneNumber).encode()).hexdigest()
 
     def getUserAgent(self):
         return self.__class__._USERAGENT_STRING.format(
-            WHATSAPP_VERSION = self.getVersion(),
-            OS_NAME = self.getOSName() + "Version",
-            OS_VERSION = self.getOSVersion(),
-            DEVICE_NAME = self.getDeviceName()
+            WHATSAPP_VERSION=self.getVersion(),
+            OS_NAME=self.getOSName() + "Version",
+            OS_VERSION=self.getOSVersion(),
+            DEVICE_NAME=self.getDeviceName()
         )
-

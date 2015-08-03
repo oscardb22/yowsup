@@ -1,4 +1,4 @@
-import time,datetime,re, hashlib
+import time, datetime, re, hashlib
 from dateutil import tz
 import os
 from .constants import YowConstants
@@ -10,14 +10,17 @@ import hashlib
 
 logger = logging.getLogger(__name__)
 
+
 class HexTools:
     decode_hex = codecs.getdecoder("hex_codec")
+
     @staticmethod
     def decodeHex(hexString):
         result = HexTools.decode_hex(hexString)[0]
-        if sys.version_info >= (3,0):
+        if sys.version_info >= (3, 0):
             result = result.decode('latin-1')
         return result
+
 
 class WATools:
     @staticmethod
@@ -34,6 +37,7 @@ class WATools:
             f.close()
         b64Hash = base64.b64encode(sha1.digest())
         return b64Hash if type(b64Hash) is str else b64Hash.decode()
+
 
 class StorageTools:
     @staticmethod
@@ -68,7 +72,7 @@ class StorageTools:
     def writeNonce(phone, nonce):
         path = StorageTools.getStorageForPhone(phone)
         with open(os.path.join(path, "nonce"), 'wb') as idFile:
-            idFile.write(nonce.encode("latin-1") if sys.version_info >= (3,0) else nonce)
+            idFile.write(nonce.encode("latin-1") if sys.version_info >= (3, 0) else nonce)
 
     @staticmethod
     def getNonce(phone):
@@ -80,23 +84,24 @@ class StorageTools:
                 out = idFile.read()
         return out
 
+
 class TimeTools:
     @staticmethod
     def parseIso(iso):
-        d=datetime.datetime(*map(int, re.split('[^\d]', iso)[:-1]))
+        d = datetime.datetime(*map(int, re.split('[^\d]', iso)[:-1]))
         return d
-    
-    @staticmethod 
+
+    @staticmethod
     def utcToLocal(dt):
         utc = tz.gettz('UTC')
         local = tz.tzlocal()
-        dtUtc =  dt.replace(tzinfo=utc)
-        
+        dtUtc = dt.replace(tzinfo=utc)
+
         return dtUtc.astimezone(local)
 
     @staticmethod
     def utcTimestamp():
-        #utc = tz.gettz('UTC')
+        # utc = tz.gettz('UTC')
         utcNow = datetime.datetime.utcnow()
         return TimeTools.datetimeToTimestamp(utcNow)
 
@@ -110,23 +115,27 @@ class ModuleTools:
     def INSTALLED_PIL():
         try:
             import PIL
+
             return True
         except ImportError:
             return False
+
     @staticmethod
     def INSTALLED_AXOLOTL():
         try:
             import axolotl
+
             return True
         except ImportError:
             return False
 
-class ImageTools:
 
+class ImageTools:
     @staticmethod
     def scaleImage(infile, outfile, imageFormat, width, height):
         if ModuleTools.INSTALLED_PIL():
             from PIL import Image
+
             im = Image.open(infile)
             im.thumbnail((width, height))
             im.save(outfile, imageFormat)
@@ -135,11 +144,11 @@ class ImageTools:
             logger.warn("Python PIL library not installed")
             return False
 
-
     @staticmethod
     def getImageDimensions(imageFile):
         if ModuleTools.INSTALLED_PIL():
             from PIL import Image
+
             im = Image.open(imageFile)
             return im.size
         else:

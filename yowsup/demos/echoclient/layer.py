@@ -1,7 +1,7 @@
-from yowsup.layers.interface                           import YowInterfaceLayer, ProtocolEntityCallback
+from yowsup.layers.interface import YowInterfaceLayer, ProtocolEntityCallback
+
 
 class EchoLayer(YowInterfaceLayer):
-
     @ProtocolEntityCallback("message")
     def onMessage(self, messageProtocolEntity):
 
@@ -14,12 +14,11 @@ class EchoLayer(YowInterfaceLayer):
         self.toLower(messageProtocolEntity.ack())
         self.toLower(messageProtocolEntity.ack(True))
 
-
     @ProtocolEntityCallback("receipt")
     def onReceipt(self, entity):
         self.toLower(entity.ack())
 
-    def onTextMessage(self,messageProtocolEntity):
+    def onTextMessage(self, messageProtocolEntity):
         # just print info
         print("Echoing %s to %s" % (messageProtocolEntity.getBody(), messageProtocolEntity.getFrom(False)))
 
@@ -29,7 +28,10 @@ class EchoLayer(YowInterfaceLayer):
             print("Echoing image %s to %s" % (messageProtocolEntity.url, messageProtocolEntity.getFrom(False)))
 
         elif messageProtocolEntity.getMediaType() == "location":
-            print("Echoing location (%s, %s) to %s" % (messageProtocolEntity.getLatitude(), messageProtocolEntity.getLongitude(), messageProtocolEntity.getFrom(False)))
+            print("Echoing location (%s, %s) to %s" % (
+            messageProtocolEntity.getLatitude(), messageProtocolEntity.getLongitude(),
+            messageProtocolEntity.getFrom(False)))
 
         elif messageProtocolEntity.getMediaType() == "vcard":
-            print("Echoing vcard (%s, %s) to %s" % (messageProtocolEntity.getName(), messageProtocolEntity.getCardData(), messageProtocolEntity.getFrom(False)))
+            print("Echoing vcard (%s, %s) to %s" % (
+            messageProtocolEntity.getName(), messageProtocolEntity.getCardData(), messageProtocolEntity.getFrom(False)))

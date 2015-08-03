@@ -1,5 +1,7 @@
 from axolotl.state.prekeystore import PreKeyStore
 from axolotl.state.prekeyrecord import PreKeyRecord
+
+
 class LitePreKeyStore(PreKeyStore):
     def __init__(self, dbConn):
         """
@@ -19,7 +21,7 @@ class LitePreKeyStore(PreKeyStore):
         if not result:
             raise Exception("No such prekeyRecord!")
 
-        return PreKeyRecord(serialized = result[0])
+        return PreKeyRecord(serialized=result[0])
 
     def loadPendingPreKeys(self):
         q = "SELECT record FROM prekeys"
@@ -30,7 +32,7 @@ class LitePreKeyStore(PreKeyStore):
         return [PreKeyRecord(serialized=result[0]) for result in result]
 
     def storePreKey(self, preKeyId, preKeyRecord):
-        #self.removePreKey(preKeyId)
+        # self.removePreKey(preKeyId)
         q = "INSERT INTO prekeys (prekey_id, record) VALUES(?,?)"
         cursor = self.dbConn.cursor()
         cursor.execute(q, (preKeyId, preKeyRecord.serialize()))

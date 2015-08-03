@@ -3,11 +3,12 @@ from struct import pack
 from operator import xor
 from itertools import starmap
 
+
 class RC4:
     def __init__(self, key, drop):
         self.s = []
-        self.i = 0;
-        self.j = 0;
+        self.i = 0
+        self.j = 0
 
         self.s = [0] * 256
 
@@ -18,9 +19,8 @@ class RC4:
             self.j = (self.j + self.s[i] + key[i % len(key)]) % 256
             RC4.swap(self.s, i, self.j)
 
-        self.j = 0;
+        self.j = 0
         self.cipher(bytearray(drop), 0, drop)
-
 
     def cipher(self, data, offset, length):
         while True:
@@ -29,7 +29,7 @@ class RC4:
 
             if num == 0: break
 
-            self.i = (self.i+1) % 256
+            self.i = (self.i + 1) % 256
             self.j = (self.j + self.s[self.i]) % 256
 
             RC4.swap(self.s, self.i, self.j)
@@ -47,7 +47,6 @@ class RC4:
 
 
 class KeyStream:
-
     def __init__(self, key, macKey):
         self.key = key if sys.version_info < (3, 0) else bytes(key)
         self.rc4 = RC4(self.key, 0x300)
@@ -56,11 +55,12 @@ class KeyStream:
 
     def computeMac(self, bytes_buffer, int_offset, int_length):
         mac = hmac.new(self.macKey, None, hashlib.sha1)
-        updateData = bytes_buffer[int_offset:] + bytearray([self.seq >> 24, (self.seq >> 16) % 256, (self.seq >> 8) % 256, self.seq % 256])
+        updateData = bytes_buffer[int_offset:] + bytearray(
+            [self.seq >> 24, (self.seq >> 16) % 256, (self.seq >> 8) % 256, self.seq % 256])
 
         try:
             mac.update(updateData)
-        except TypeError: #python3 support
+        except TypeError:  # python3 support
             mac.update(bytes(updateData))
 
         self.seq += 1
@@ -85,7 +85,7 @@ class KeyStream:
     def encodeMessage(self, buf, macOffset, offset, length):
         self.rc4.cipher(buf, offset, length)
         mac = self.computeMac(buf, offset, length)
-        output = buf[0:macOffset] + mac[0:4] + buf[macOffset+4:]
+        output = buf[0:macOffset] + mac[0:4] + buf[macOffset + 4:]
         return output
 
     @staticmethod
@@ -98,28 +98,28 @@ class KeyStream:
 
         return resultBytes
 
-    #@staticmethod  ##use if drop python-2.6 support
-    #def pbkdf2( password, salt, itercount, keylen):
+    # @staticmethod  ##use if drop python-2.6 support
+    # def pbkdf2( password, salt, itercount, keylen):
     #    return bytearray(hashlib.pbkdf2_hmac('sha1', password, salt, itercount, keylen))
 
     @staticmethod
-    def pbkdf2( password, salt, itercount, keylen, hashfn = hashlib.sha1 ):
-        def pbkdf2_F( h, salt, itercount, blocknum ):
-            def prf( h, data ):
+    def pbkdf2(password, salt, itercount, keylen, hashfn=hashlib.sha1):
+        def pbkdf2_F(h, salt, itercount, blocknum):
+            def prf(h, data):
                 hm = h.copy()
                 try:
                     hm.update(bytearray(data))
-                except TypeError: #python 3 support
+                except TypeError:  # python 3 support
                     hm.update(bytes(data))
 
                 d = hm.digest()
                 return bytearray(d)
 
-            U = prf( h, salt + pack('>i',blocknum ) )
+            U = prf(h, salt + pack('>i', blocknum))
             T = U
 
             for i in range(2, itercount + 1):
-                U = prf( h, U )
+                U = prf(h, U)
                 T = starmap(xor, zip(T, U))
             return T
 
@@ -127,12 +127,12 @@ class KeyStream:
         l = int(keylen / digest_size)
         if keylen % digest_size != 0:
             l += 1
-        
-        h = hmac.new(bytes(password), None, hashfn )
+
+        h = hmac.new(bytes(password), None, hashfn)
 
         T = bytearray()
-        for i in range(1, l+1):
-            tmp = pbkdf2_F( h, salt, itercount, i )
+        for i in range(1, l + 1):
+            tmp = pbkdf2_F(h, salt, itercount, i)
             T.extend(tmp)
-        
+
         return T[0: keylen]

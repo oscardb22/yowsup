@@ -1,7 +1,5 @@
 from axolotl.state.identitykeystore import IdentityKeyStore
-from axolotl.ecc.curve import Curve
 from axolotl.identitykey import IdentityKey
-from axolotl.util.keyhelper import KeyHelper
 from axolotl.identitykeypair import IdentityKeyPair
 from axolotl.ecc.djbec import *
 
@@ -17,8 +15,8 @@ class LiteIdentityKeyStore(IdentityKeyStore):
                        "registration_id INTEGER, public_key BLOB, private_key BLOB,"
                        "next_prekey_id INTEGER, timestamp INTEGER);")
 
-        #identityKeyPairKeys = Curve.generateKeyPair()
-        #self.identityKeyPair = IdentityKeyPair(IdentityKey(identityKeyPairKeys.getPublicKey()),
+        # identityKeyPairKeys = Curve.generateKeyPair()
+        # self.identityKeyPair = IdentityKeyPair(IdentityKey(identityKeyPairKeys.getPublicKey()),
         #                                       identityKeyPairKeys.getPrivateKey())
         # self.localRegistrationId = KeyHelper.generateRegistrationId()
 
@@ -38,7 +36,6 @@ class LiteIdentityKeyStore(IdentityKeyStore):
         result = c.fetchone()
         return result[0] if result else None
 
-
     def storeLocalData(self, registrationId, identityKeyPair):
         q = "INSERT INTO identities(recipient_id, registration_id, public_key, private_key) VALUES(-1, ?, ?, ?)"
         c = self.dbConn.cursor()
@@ -51,7 +48,6 @@ class LiteIdentityKeyStore(IdentityKeyStore):
         q = "DELETE FROM identities WHERE recipient_id=?"
         self.dbConn.cursor().execute(q, (recipientId,))
         self.dbConn.commit()
-
 
         q = "INSERT INTO identities (recipient_id, public_key) VALUES(?, ?)"
         c = self.dbConn.cursor()

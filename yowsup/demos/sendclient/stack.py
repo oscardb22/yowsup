@@ -9,8 +9,6 @@ from yowsup.layers.stanzaregulator import YowStanzaRegulator
 from yowsup.layers.protocol_receipts import YowReceiptProtocolLayer
 from yowsup.layers.protocol_acks import YowAckProtocolLayer
 from yowsup.layers.logger import YowLoggerLayer
-from yowsup.common import YowConstants
-from yowsup import env
 
 
 class YowsupSendStack(object):
